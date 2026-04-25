@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  php:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: phpfpm
+    restart: always
+    working_dir: /var/www
+    volumes:
+      - ../src:/var/www
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ../src:/var/www
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Heng0308
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: kimheng
+      MYSQL_PASSWORD: Heng0308
+    volumes:
+      - mysql_data:/var/lib/mysql
+  
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: Heng0308
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
