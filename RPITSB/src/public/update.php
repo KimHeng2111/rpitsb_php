@@ -9,16 +9,17 @@
         if($stmt->rowCount() == 0) {
             $error[] = 'Update Category ID : ' . $catId . ' Is Not FOUND!!!!!';
         }else{
-            
+            require 'helper/uploadImage.php';
+            $oldImageUrl = $result[0]['imageUrl'];
             $catName = $_POST["catName"];
             $catOrder = (int) $_POST["catOrder"];
             $catNote = $_POST["catNote"];
-            $url = $_POST["catImage"];
+            $url ="images/" . generateRandomNameWithDate($_FILES["image"]["name"]);
             $sql = 'UPDATE tbl_category 
             SET catName = :catName, 
                 catOrder = :catOrder, 
                 catNote = :catNote, 
-                url = :url 
+                imageUrl = :imageUrl 
             WHERE catId = :catId';
 
             $stmt = $pdo->prepare($sql);
@@ -27,11 +28,15 @@
             $stmt->bindValue(':catName', $catName, PDO::PARAM_STR);
             $stmt->bindValue(':catOrder', $catOrder, PDO::PARAM_INT);
             $stmt->bindValue(':catNote', $catNote, PDO::PARAM_STR);
-            $stmt->bindValue(':url', $url, PDO::PARAM_STR);
+            $stmt->bindValue(':imageUrl', $url, PDO::PARAM_STR);
             $stmt->bindValue(':catId', $catId, PDO::PARAM_INT);
-
+            
             // 5. Execute
             if ($stmt->execute()) {
+                move_uploaded_file($_FILES["image"]["tmp_name"], $url);
+                if (!empty($oldImageUrl) && file_exists($oldImageUrl)) {
+                    unlink($oldImageUrl);
+                }
                 header("Location: index.php?update=success");
                 exit;
 }
@@ -45,7 +50,7 @@
         $catName = $result[0]['catName'];
         $catOrder = $result[0]['catOrder'];
         $catNote = $result[0]['catNote'];
-        $url = $result[0]['url'];
+        $url = $result[0]['imageUrl'];
         if($stmt->rowCount() == 0) {
             header("Location: index.php");
             exit; // Stop script execution after redirect
@@ -89,13 +94,13 @@
                                 <div class="row">
                                     <div class="mb-20">
                                         <label class="form-label d-block fw-bold">Current Image</label>
-                                        <label for="catImage"><img src="{$currentImageUrl}" class="img-thumbnail mb-2" style="height: 150px; width: 150px; object-fit: cover;"></label>
+                                        <label for="catImage"><img src="{$url}" class="img-thumbnail mb-2" style="height: 150px; width: 150px;"></label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="mb-3">
                                             <label for="catImage" class="form-label fw-bold">Upload New Image (Optional)</label>
-                                            <input type="file" class="form-control" id="catImage" name="catImage" accept="image/*">
+                                            <input type="file" class="form-control" id="catImage" name="image" accept="image/*">
                                         </div>
                                 </div>
                             </div>

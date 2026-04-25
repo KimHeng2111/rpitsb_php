@@ -10,6 +10,8 @@ services:
     working_dir: /var/www
     volumes:
       - ../src:/var/www
+    depends_on:
+      - mysql
 
   nginx:
     image: nginx:latest
@@ -33,8 +35,10 @@ services:
       MYSQL_USER: kimheng
       MYSQL_PASSWORD: Heng0308
     volumes:
-      - mysql_data:/var/lib/mysql
-  
+      - ./storage/mysql:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -49,6 +53,3 @@ services:
       PMA_PASSWORD: Heng0308
     depends_on:
       - mysql
-
-volumes:
-  mysql_data:

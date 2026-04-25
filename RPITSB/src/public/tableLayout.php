@@ -11,13 +11,14 @@
 </button>
     </div>
 </div>
-    <table class="table table-bordered table-hover table-striped">
+    <table class="table table-bordered table-hover table-striped text-center align-middle">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Note</th>
                 <th>Order</th>
+                <th>Image</th>
                 <th style="width: 200px;">Actions</th>
             </tr>
         </thead>
@@ -28,9 +29,13 @@
                     <td><?= htmlspecialchars($item['catName']) ?></td>
                     <td><?= htmlspecialchars($item['catNote']) ?></td>
                     <td><?= htmlspecialchars($item['catOrder']) ?></td>
+                    <td >
+                        <img  src="<?= htmlspecialchars($item['imageUrl']) ?>" alt="<?= htmlspecialchars($item['catName']) ?>" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                    </td>
                     <td>
                         <a href="update.php?catId=<?=htmlspecialchars($item['catId'])  ?>" class="btn btn-sm btn-success"><i class="bi bi-pencil-square"></i> Edit</a>
                         <a href="" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</a>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -78,4 +83,3 @@
     </div>
   </div>
 </div>
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editCategory">Edit Category</button>
